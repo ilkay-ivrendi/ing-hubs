@@ -1,4 +1,4 @@
-# 🇹🇷 ING-Hubs TR - Employee Management Application
+# ING-Hubs 🇹🇷 - Employee Management Application
 
 This is a modern, modular web application built using **Lit** and **Vite**, designed for managing employee records in a clean and user-friendly interface.
 
