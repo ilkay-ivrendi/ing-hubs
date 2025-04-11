@@ -21,23 +21,62 @@ export class Pagination extends LitElement {
         }));
     }
 
+    getPageNumbers() {
+        const pages = [];
+        const total = this.totalPages;
+        const current = this.currentPage;
+
+        // Always show first page
+        pages.push(1);
+
+        // Left-side dots
+        if (current > 4) {
+            pages.push('...');
+        }
+
+        // Determine middle range (around current page)
+        const start = Math.max(2, current - 2);
+        const end = Math.min(total - 1, current + 2);
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        // Right-side dots
+        if (current < total - 3) {
+            pages.push('...');
+        }
+
+        // Always show last page (if more than 1)
+        if (total > 1) {
+            pages.push(total);
+        }
+
+        return pages;
+    }
+
     render() {
+        const pageNumbers = this.getPageNumbers();
+
         return html`
             <div class="pagination-controls">
                 <button @click="${() => this.goToPage(this.currentPage - 1)}" ?disabled="${this.currentPage <= 1}">
-                    Previous
+                     <fa-icon class="fas fa-angle-left" size="2em"></fa-icon></a>
                 </button>
 
-                ${Array.from({ length: this.totalPages }, (ignoredValue, index) => index + 1).map(page => html`
-                    <button @click="${() => this.goToPage(page)}"
-                        ?disabled="${this.currentPage === page}"
-                        class="${this.currentPage === page ? 'active' : ''}">
-                        ${page}
-                    </button>
-                `)}
+                ${pageNumbers.map(page => {
+                    return html`
+                            <button 
+                                @click="${() => page !== '...' && this.goToPage(page)}"
+                                ?disabled="${page === '...' || this.currentPage === page}" 
+                                class="${this.currentPage === page ? 'active' : ''}">
+                                ${page}
+                            </button>
+                        `;
+                    })}
 
                 <button @click="${() => this.goToPage(this.currentPage + 1)}" ?disabled="${this.currentPage >= this.totalPages}">
-                    Next
+                    <fa-icon class="fas fa-angle-right" size="2em"></fa-icon></a>
                 </button>
             </div>
         `
@@ -46,28 +85,37 @@ export class Pagination extends LitElement {
     static styles = css`
     .pagination-controls {
       margin-top: 1em;
-      text-align: center;
+      display: flex;
+      justify-content: center;
     }
 
     .pagination-controls button {
-      padding: 0.5em 1em;
       margin: 0 0.5em;
+      width: 30px;
+      height: 30px;
       cursor: pointer;
-      background-color: #ff6303;
-      color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 50%;
     }
 
     .pagination-controls button[disabled] {
-      background-color: #ccc;
       cursor: not-allowed;
     }
 
     .pagination-controls button.active {
       background-color: #ff9136;
       font-weight: bold;
+      color: white;
+      padding: 3px;
     }
+
+    .pagination-controls button fa-icon {
+      color: #ff9136;
+    }
+
+    .pagination-controls button[disabled] fa-icon {
+      color: gray;
+    }   
   `;
 }
 
