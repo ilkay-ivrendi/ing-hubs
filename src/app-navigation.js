@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import ingLogo from './assets/ing-logo.png'
-import agentIcon from './assets/callcenter-agent.png'
 import 'fa-icons';
+import agentIcon from './assets/callcenter-agent.png'
 import trFlag from 'flag-icons/flags/4x3/tr.svg';
 // import enFlag from 'flag-icons/flags/1x1/en.svg';
 
@@ -51,7 +51,6 @@ export class AppNavigation extends LitElement {
     }
 
     .nav-logo {
-        color:red;
         width: 30px;
         height: 30px;
         border-radius: 5px;

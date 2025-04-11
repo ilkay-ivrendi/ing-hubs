@@ -1,50 +1,39 @@
 import { LitElement, css, html } from 'lit'
 import 'fa-icons';
+import '../components/confirm-modal.js';
+import '../components/pagination.js';
 
 export class EmployeesView extends LitElement {
 
     static properties = {
         employees: { type: Array },
+        currentPage: { type: Number },
+        itemsPerPage: { type: Number }
     };
 
 
     constructor() {
         super()
-        this.employees = [
-            {
-              id: 101,
-              firstName: 'Alfreds',
-              lastName: 'Futterkiste',
-              employmentDate: '04/06/2022',
-              birthDate: '03/03/1992',
-              phone: '+(90) 532 123 45 67',
-              email: 'alfred@sourtimes.com',
-              department: 'Analytics',
-              position: 'Junior',
-            },
-            {
-              id: 102,
-              firstName: 'Alice',
-              lastName: 'Johnson',
-              employmentDate: '01/10/2021',
-              birthDate: '05/06/1990',
-              phone: '+(90) 532 111 22 33',
-              email: 'alice@example.com',
-              department: 'Development',
-              position: 'Senior Developer',
-            },
-            {
-              id: 103,
-              firstName: 'Bob',
-              lastName: 'Smith',
-              employmentDate: '12/12/2020',
-              birthDate: '09/09/1988',
-              phone: '+(90) 532 222 33 44',
-              email: 'bob@example.com',
-              department: 'UI/UX',
-              position: 'Designer',
-            },
-          ];
+        this.employees = [];
+        this.currentPage = 1;
+        this.itemsPerPage = 10;
+    }
+
+    async firstUpdated() {
+        const response = await fetch('/src/MOCK_DATA.json');
+        const data = await response.json();
+        this.employees = data;
+    }
+
+    get currentPageData() {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        return this.employees.slice(startIndex, endIndex);
+    }
+
+    onPageChange(event) {
+        this.currentPage = event.detail.pageNumber;
+        console.log("page change", this.currentPage);
     }
 
     render() {
@@ -74,26 +63,36 @@ export class EmployeesView extends LitElement {
             </thead>
             <tbody>
 
-            ${this.employees.map((employee) => html`
+            ${this.currentPageData.map((employee) => html`
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>${employee.firstName}</td>
-                    <td>${employee.lastName}</td>
-                    <td>${employee.employmentDate}</td>
-                    <td>${employee.birthDate}</td>
+                    <td>${employee.first_name}</td>
+                    <td>${employee.last_name}</td>
+                    <td>${employee.employment_date}</td>
+                    <td>${employee.birth_date}</td>
                     <td>${employee.phone}</td>
                     <td>${employee.email}</td>
                     <td>${employee.department}</td>
                     <td>${employee.position}</td>
                     <td>
                         <button class="action-button"  @click="${() => this.onEditEmployee(employee.id)}"><fa-icon class="fas fa-edit"></fa-icon></button>
-                        <button class="action-button" @click="${() => this.onDeleteEmployee(employee.id)}"><fa-icon class="fas fa-trash"></fa-icon></button>
+                        <button class="action-button" @click="${() => this.onDeleteEmployee(employee)}"><fa-icon class="fas fa-trash"></fa-icon></button>
                     </td>
                 </tr>
                 `
-            )}
+        )}
             </tbody>
         </table>
+
+       <pagination-component
+            .currentPage="${this.currentPage}"
+            .totalPages="${Math.ceil(this.employees.length / this.itemsPerPage)}"
+            @page-change="${this.onPageChange}"
+        >
+        </pagination-component>
+
+        <confirm-modal id="confirm-delete"></confirm-modal>
+
         `;
     }
 
@@ -101,8 +100,15 @@ export class EmployeesView extends LitElement {
         console.log("Button Clicked!!");
     }
 
-    onDeleteEmployee(employeeId) {
-        console.log("Delete Employee", employeeId);
+    onDeleteEmployee(employee) {
+        console.log("Delete Employee", employee.id);
+        const fullName = `${employee.first_name} ${employee.last_name}`;
+        const dialog = this.shadowRoot.getElementById('confirm-delete');
+        dialog.openModal(`Selected employee record of ${fullName} will be deleted`);
+
+        dialog.addEventListener('confirmModal', () => {
+            this.employees = this.employees.filter(e => e.id !== this.selectedEmployeeId);
+        }, { once: true }); // prevent multiple triggers
     }
 
     onEditEmployee(employeId) {
