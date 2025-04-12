@@ -31,7 +31,7 @@ export class CreateEmployee extends LitElement {
     this.error = '';
 
     window.addEventListener('language-changed', () => {
-      this.requestUpdate();  
+      this.requestUpdate();
     });
   }
 

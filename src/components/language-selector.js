@@ -4,38 +4,38 @@ import trFlag from 'flag-icons/flags/4x3/tr.svg';
 import enFlag from 'flag-icons/flags/4x3/gb.svg';
 
 export class LanguageSelector extends LitElement {
-    static properties = {
-        lang: { type: String },
-    };
+  static properties = {
+    lang: { type: String },
+  };
 
-    constructor() {
-        super();
-        this.lang = document.documentElement.lang || 'en';
+  constructor() {
+    super();
+    this.lang = document.documentElement.lang || 'en';
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    const storedLang = localStorage.getItem('lang');
+    if (storedLang) {
+      this.lang = storedLang;
     }
+  }
 
-    connectedCallback() {
-        super.connectedCallback();
-        const storedLang = localStorage.getItem('lang');
-        if (storedLang) {
-            this.lang = storedLang;
-        }
-    }
+  handleLanguageChange(lang) {
+    changeLanguage(lang).then(() => {
+      this.lang = lang;
+      this.requestUpdate();
 
-    handleLanguageChange(lang) {
-        changeLanguage(lang).then(() => {
-            this.lang = lang;
-            this.requestUpdate();
+      this.dispatchEvent(new CustomEvent('language-changed', {
+        detail: { lang },
+        bubbles: true,
+        composed: true
+      }));
+    });
+  }
 
-            this.dispatchEvent(new CustomEvent('language-changed', {
-                detail: { lang },
-                bubbles: true,
-                composed: true
-            }));
-        });
-    }
-
-    render() {
-        return html`
+  render() {
+    return html`
         <div class="language-selector">
           <button class="lang-btn">
             <img src=${this.lang === 'tr' ? trFlag : enFlag} width="25" />
@@ -46,9 +46,9 @@ export class LanguageSelector extends LitElement {
           </div>
         </div>
       `;
-    }
+  }
 
-    static styles = css`
+  static styles = css`
       .language-selector {
         position: relative;
         display: inline-block;

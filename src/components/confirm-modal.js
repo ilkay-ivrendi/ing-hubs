@@ -2,56 +2,55 @@ import { LitElement, html, css } from 'lit';
 import 'fa-icons';
 
 export class ConfirmModal extends LitElement {
-    static properties = {
-        open: { type: Boolean, reflect: true },
-        title: { type: String },
-        message: { type: String },
-    };
+  static properties = {
+    open: { type: Boolean, reflect: true },
+    title: { type: String },
+    message: { type: String },
+  };
 
-    constructor() {
-        super();
-        this.open = false;
-        this.message = '';
-        this.title = 'Are you Sure?';
+  constructor() {
+    super();
+    this.open = false;
+    this.message = '';
+    this.title = 'Are you Sure?';
+  }
 
-    }
+  openModal(message) {
+    this.message = message;
+    this.open = true;
+  }
 
-    openModal(message) {
-        this.message = message;
-        this.open = true;
-    }
+  closeModal() {
+    this.open = false;
+  }
 
-    closeModal() {
-        this.open = false;
-    }
+  confirmModal() {
+    this.dispatchEvent(new CustomEvent('confirmModal', {
+      bubbles: true,
+      composed: true,
+    }));
+    this.closeModal();
+  }
 
-    confirmModal() {
-        this.dispatchEvent(new CustomEvent('confirmModal', {
-            bubbles: true,
-            composed: true,
-        }));
-        this.closeModal();
-    }
+  render() {
+    if (!this.open) return html``;
+    return html`
+            <div class="modal-backdrop" @click=${this.closeModal}></div>
+            <div class="confirm-modal">
+              <div class="modal-header">
+                  <h3>${this.title}</h3>
+                  <fa-icon class="fas fa-times close-modal" @click=${this.closeModal}></fa-icon>
+              </div>
+              <p>${this.message}</p>
+              <div class="actions">
+                <button class="confirm-btn" @click=${this.confirmModal}>${t('proceed')}</button>
+                <button class="cancel-btn" @click=${this.closeModal}>${t('cancel')}</button>
+              </div>
+            </div>
+          `;
+  }
 
-    render() {
-        if (!this.open) return html``;
-        return html`
-      <div class="modal-backdrop" @click=${this.closeModal}></div>
-      <div class="confirm-modal">
-        <div class="modal-header">
-            <h3>${this.title}</h3>
-            <fa-icon class="fas fa-times close-modal" @click=${this.closeModal}></fa-icon>
-        </div>
-        <p>${this.message}</p>
-        <div class="actions">
-          <button class="confirm-btn" @click=${this.confirmModal}>${t('proceed')}</button>
-          <button class="cancel-btn" @click=${this.closeModal}>${t('cancel')}</button>
-        </div>
-      </div>
-    `;
-    }
-
-    static styles = css`
+  static styles = css`
     .modal-backdrop {
       position: fixed;
       inset: 0;

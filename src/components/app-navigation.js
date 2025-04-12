@@ -15,20 +15,18 @@ export class AppNavigation extends LitElement {
     constructor() {
         super();
         this.lang = localStorage.getItem('lang') || 'en';
-        loadTranslations(this.lang); // Load translations immediately on initialization
-        // Initialize with default path or get from router if available
+        loadTranslations(this.lang);
         window.addEventListener('vaadin-router-location-changed', (event) => {
             this.currentPath = event.detail.location.pathname;
         });
 
-        // Listen for language change events
         window.addEventListener('language-changed', () => {
-            this.requestUpdate();  // Trigger re-render on language change
+            this.requestUpdate();
         });
     }
 
     async firstUpdated() {
-        await loadTranslations(this.lang); 
+        await loadTranslations(this.lang);
         this.dispatchEvent(new CustomEvent('language-changed', {
             bubbles: true,
             composed: true

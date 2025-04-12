@@ -7,7 +7,7 @@ import './pages/create-employee.js';
 import './pages/edit-employee.js';
 
 /**
- * An example element.
+ * ING-Hubs Employe Management Application
  *
  * @slot - This element has a slot
  * @csspart button - The button

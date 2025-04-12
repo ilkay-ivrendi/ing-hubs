@@ -6,9 +6,9 @@ export class HomeView extends LitElement {
 
     constructor() {
         super()
-       
+
         window.addEventListener('language-changed', () => {
-            this.requestUpdate();  
+            this.requestUpdate();
         });
     }
 

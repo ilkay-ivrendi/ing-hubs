@@ -5,74 +5,74 @@ import { Router } from '@vaadin/router';
 import { t } from '../i18n/translation-helper.js';
 
 export class EditEmployee extends LitElement {
-    static properties = {
-        employeeId: { type: String },
-        employeeData: { type: Object },
+  static properties = {
+    employeeId: { type: String },
+    employeeData: { type: Object },
+  }
+
+  constructor() {
+    super();
+    this.employeeId = null;
+    this.employeeData = {};
+
+    window.addEventListener('vaadin-router-location-changed', (event) => {
+      const location = event.detail.location;
+      const id = location.params?.id;
+      this.setEmployeeId(id);
+    });
+
+    window.addEventListener('language-changed', () => {
+      this.requestUpdate();
+    });
+  }
+
+  setEmployeeId(employeeId) {
+    this.employeeId = employeeId;
+    this.fetchEmployeeData();
+  }
+
+  fetchEmployeeData() {
+    const employee = store.getState().employees.list.find(e => e.id == this.employeeId);
+    if (employee) {
+      this.employeeData = { ...employee };
     }
+  }
 
-    constructor() {
-        super();
-        this.employeeId = null;
-        this.employeeData = {};
+  handleInputChange(event) {
+    const { name, value } = event.target;
+    this.employeeData[name] = value;
+  }
 
-        window.addEventListener('vaadin-router-location-changed', (event) => {
-            const location = event.detail.location;
-            const id = location.params?.id;
-            this.setEmployeeId(id);
-        });
+  handleSubmit(event) {
+    event.preventDefault();
+    store.dispatch(updateEmployee({
+      id: this.employeeId,
+      updatedData: this.employeeData,
+    }));
+    Router.go('/employees');
+  }
 
-        window.addEventListener('language-changed', () => {
-          this.requestUpdate(); 
-        });
-    }
+  formatDateForInput(dateString) {
+    if (!dateString) return '';
+    const [day, month, year] = dateString.split('/');
+    const date = new Date(`${year}-${month}-${day}`);
+    const formattedDate = date.toISOString().split('T')[0];
+    return formattedDate;
+  }
 
-    setEmployeeId(employeeId) {
-        this.employeeId = employeeId;
-        this.fetchEmployeeData();
-    }
+  handleDateChange(event, field) {
+    const [year, month, day] = event.target.value.split('-');
+    const formattedDate = `${day}/${month}/${year}`;
 
-    fetchEmployeeData() {
-        const employee = store.getState().employees.list.find(e => e.id == this.employeeId);
-        if (employee) {
-            this.employeeData = { ...employee }; 
-        }
-    }
-
-    handleInputChange(event) {
-        const { name, value } = event.target;
-        this.employeeData[name] = value;
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
-        store.dispatch(updateEmployee({
-            id: this.employeeId,
-            updatedData: this.employeeData,
-        }));
-        Router.go('/employees');
-    }
-
-    formatDateForInput(dateString) {
-        if (!dateString) return '';
-        const [day, month, year] = dateString.split('/');
-        const date = new Date(`${year}-${month}-${day}`);
-        const formattedDate = date.toISOString().split('T')[0];
-        return formattedDate;
-    }
-
-    handleDateChange(event, field) {
-        const [year, month, day] = event.target.value.split('-');
-        const formattedDate = `${day}/${month}/${year}`;
-
-        this.employeeData = {
-            ...this.employeeData,
-            [field]: formattedDate, 
-        };
-    }
+    this.employeeData = {
+      ...this.employeeData,
+      [field]: formattedDate,
+    };
+  }
 
 
-    render() {
-        return html`
+  render() {
+    return html`
          <div class="edit-employee-container">
             <div class='edit-employee-form'>
                 <h2 class="form-title">${t('edit_employee_title')}</h2>
@@ -113,9 +113,9 @@ export class EditEmployee extends LitElement {
             </div>
         </div>
         `;
-    }
+  }
 
-    static styles = css`
+  static styles = css`
     .edit-employee-container {
       display: flex;
       justify-content: center;
