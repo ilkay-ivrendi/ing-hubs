@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.1",
     "@vaadin/router": "^2.0.0",
     "fa-icons": "^0.2.0",
     "flag-icons": "^7.3.2",
-    "lit": "^3.2.1"
+    "lit": "^3.2.1",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "vite": "^6.2.0"

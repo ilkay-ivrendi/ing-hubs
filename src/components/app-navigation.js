@@ -1,39 +1,49 @@
 import { LitElement, css, html } from 'lit'
-import ingLogo from './assets/ing-logo.png'
 import 'fa-icons';
-import agentIcon from './assets/callcenter-agent.png'
+
+import ingLogo from '../assets/ing-logo.png'
+import agentIcon from '../assets/callcenter-agent.png'
 import trFlag from 'flag-icons/flags/4x3/tr.svg';
-// import enFlag from 'flag-icons/flags/1x1/en.svg';
 
 export class AppNavigation extends LitElement {
+    static properties = {
+        currentPath: { type: String },
+    };
 
     constructor() {
-        super()
+        super();
+        // Initialize with default path or get from router if available
+        window.addEventListener('vaadin-router-location-changed', (event) => {
+            this.currentPath = event.detail.location.pathname;
+        });
     }
 
     render() {
+        const isEmployeesView = this.currentPath === '/employees';
         return html`
-            <h5 class="page-title">Emplooye List (Table View)</h5>
+            ${isEmployeesView
+                ? html`<h5 class="page-title">Emplooye List (Table View)</h5>`
+                : html`<h5 class="page-title">Welcome to ING Hubs</h5>`
+            }
             <nav>
                 <div class="logo-container">
-                    <img src=${ingLogo} class="nav-logo" >
-                    <h3>ING</h3>
+                    <a href="/" class="icon-link">
+                        <img src=${ingLogo} class="nav-logo" >
+                        <h3>ING</h3>
+                    </a>
                 </div>
                 
                 <div class="menu-items">
                     <a href="/employees" class="icon-link">
                         <img src=${agentIcon} class="nav-logo" >Employees</a>
-                    <a href="#" class="icon-link" @click="${this.onAddNewEmployee}">
+
+                    <a href="/create-employee" class="icon-link ${!isEmployeesView ? 'disabled' : ''}">
                         <fa-icon class="fas fa-plus"></fa-icon> Add New</a>
 
                     <img src=${trFlag} width="25">
                 </div> 
             </nav>    
         `
-    }
-
-    onAddNewEmployee() {
-        console.log("Add New Employe");
     }
 
     static styles = css`
@@ -80,10 +90,18 @@ export class AppNavigation extends LitElement {
         display: flex;
         align-items: center;
         gap: 5px;
+        text-decoration: none;
+        color:black;
     }
 
     fa-icon {
         display:flex;
+    }
+
+    .icon-link.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     `;

@@ -13,7 +13,6 @@ export class Pagination extends LitElement {
     }
 
     goToPage(pageNumber) {
-        console.log("should change page", pageNumber);
         this.dispatchEvent(new CustomEvent('page-change', {
             detail: { pageNumber },
             bubbles: true,
@@ -66,57 +65,57 @@ export class Pagination extends LitElement {
 
                 ${pageNumbers.map(page => {
                     return html`
-                            <button 
-                                @click="${() => page !== '...' && this.goToPage(page)}"
-                                ?disabled="${page === '...' || this.currentPage === page}" 
-                                class="${this.currentPage === page ? 'active' : ''}">
-                                ${page}
-                            </button>
-                        `;
-                    })}
+                        <button 
+                            @click="${() => page !== '...' && this.goToPage(page)}"
+                            ?disabled="${page === '...' || this.currentPage === page}" 
+                            class="${this.currentPage === page ? 'active' : ''}">
+                            ${page}
+                        </button>
+                    `;
+                })}
 
                 <button @click="${() => this.goToPage(this.currentPage + 1)}" ?disabled="${this.currentPage >= this.totalPages}">
                     <fa-icon class="fas fa-angle-right" size="2em"></fa-icon></a>
                 </button>
             </div>
-        `
+            `
     }
 
     static styles = css`
-    .pagination-controls {
-      margin-top: 1em;
-      display: flex;
-      justify-content: center;
-    }
+        .pagination-controls {
+          margin-top: 1em;
+          display: flex;
+          justify-content: center;
+        }
 
-    .pagination-controls button {
-      margin: 0 0.5em;
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-      border: none;
-      border-radius: 50%;
-    }
+        .pagination-controls button {
+          margin: 0 0.5em;
+          width: 30px;
+          height: 30px;
+          cursor: pointer;
+          border: none;
+          border-radius: 50%;
+        }
 
-    .pagination-controls button[disabled] {
-      cursor: not-allowed;
-    }
+        .pagination-controls button[disabled] {
+          cursor: not-allowed;
+        }
 
-    .pagination-controls button.active {
-      background-color: #ff9136;
-      font-weight: bold;
-      color: white;
-      padding: 3px;
-    }
+        .pagination-controls button.active {
+          background-color: #ff9136;
+          font-weight: bold;
+          color: white;
+          padding: 3px;
+        }
 
-    .pagination-controls button fa-icon {
-      color: #ff9136;
-    }
+        .pagination-controls button fa-icon {
+          color: #ff9136;
+        }
 
-    .pagination-controls button[disabled] fa-icon {
-      color: gray;
-    }   
-  `;
+        .pagination-controls button[disabled] fa-icon {
+          color: gray;
+        }   
+    `;
 }
 
 customElements.define('pagination-component', Pagination);

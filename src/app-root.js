@@ -1,8 +1,10 @@
 import { LitElement, css, html } from 'lit';
 import { Router } from '@vaadin/router';
-import './app-navigation.js';
+import './components/app-navigation.js';
 import './pages/home-view.js';
 import './pages/employees-view.js';
+import './pages/create-employee.js';
+import './pages/edit-employee.js';
 
 /**
  * An example element.
@@ -21,7 +23,8 @@ export class AppRoot extends LitElement {
     router.setRoutes([
       { path: '/', component: 'home-view' },
       { path: '/employees', component: 'employees-view' },
-      { path: '/settings', component: 'settings-view' },
+      { path: '/create-employee', component: 'create-employee' },
+      { path: '/employees/:id/edit', component: 'edit-employee' },
     ]);
   }
 

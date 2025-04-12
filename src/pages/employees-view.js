@@ -1,4 +1,8 @@
-import { LitElement, css, html } from 'lit'
+import { LitElement, css, html } from 'lit';
+import { store } from '../store/store.js';
+import { setEmployees, deleteEmployee, updateEmployee } from '../store/employee-slice.js';
+import { Router } from '@vaadin/router';
+
 import 'fa-icons';
 import '../components/confirm-modal.js';
 import '../components/pagination.js';
@@ -17,15 +21,29 @@ export class EmployeesView extends LitElement {
         this.employees = [];
         this.currentPage = 1;
         this.itemsPerPage = 10;
+
+        store.subscribe(() => {
+            const state = store.getState();
+            console.log("subscribed to store", state);
+            this.employees = state.employees.list;
+        });
     }
 
     async firstUpdated() {
-        const response = await fetch('/src/MOCK_DATA.json');
-        const data = await response.json();
-        this.employees = data;
+        const state = store.getState();
+        console.log("firstUpdated", state);
+        if (!state.employees.initialized) {
+            const response = await fetch('/src/MOCK_DATA.json');
+            const data = await response.json();
+            store.dispatch(setEmployees(data));
+            console.log("Not Initialized, data is fetched from MOCK_JSON");
+        } else {
+            this.employees = state.employees.list;
+        }
     }
 
     get currentPageData() {
+        if (!this.employees) return [];
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
         return this.employees.slice(startIndex, endIndex);
@@ -33,8 +51,29 @@ export class EmployeesView extends LitElement {
 
     onPageChange(event) {
         this.currentPage = event.detail.pageNumber;
-        console.log("page change", this.currentPage);
     }
+
+    onDeleteEmployee(employee) {
+        const fullName = `${employee.first_name} ${employee.last_name}`;
+
+        const dialog = this.shadowRoot.getElementById('confirm-delete');
+        dialog.openModal(`Selected employee record of ${fullName} will be deleted`);
+
+        dialog.addEventListener('confirmModal', () => {
+            store.dispatch(deleteEmployee(employee.id));
+        }, { once: true }); 
+        console.log("Delete Employee Success", employee.id);
+    }
+
+    onEditEmployee(employeeId) {
+        console.log("Edit Employe", employeeId);
+        Router.go(`/employees/${employeeId}/edit`);
+    }
+
+    onActionButtonClick() {
+        console.log("Button Clicked!!");
+    }
+
 
     render() {
         return html`
@@ -49,7 +88,7 @@ export class EmployeesView extends LitElement {
            <table>
             <thead>
                 <tr>
-                    <th><input type="checkbox"></th>
+                    <th><input type="checkbox" class="table-checkbox"></th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Date of Employment</th>
@@ -65,7 +104,7 @@ export class EmployeesView extends LitElement {
 
             ${this.currentPageData.map((employee) => html`
                 <tr>
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" class="table-checkbox"></td>
                     <td>${employee.first_name}</td>
                     <td>${employee.last_name}</td>
                     <td>${employee.employment_date}</td>
@@ -94,25 +133,6 @@ export class EmployeesView extends LitElement {
         <confirm-modal id="confirm-delete"></confirm-modal>
 
         `;
-    }
-
-    onActionButtonClick() {
-        console.log("Button Clicked!!");
-    }
-
-    onDeleteEmployee(employee) {
-        console.log("Delete Employee", employee.id);
-        const fullName = `${employee.first_name} ${employee.last_name}`;
-        const dialog = this.shadowRoot.getElementById('confirm-delete');
-        dialog.openModal(`Selected employee record of ${fullName} will be deleted`);
-
-        dialog.addEventListener('confirmModal', () => {
-            this.employees = this.employees.filter(e => e.id !== this.selectedEmployeeId);
-        }, { once: true }); // prevent multiple triggers
-    }
-
-    onEditEmployee(employeId) {
-        console.log("Edit Employe", employeId);
     }
 
     static styles = css`
@@ -154,8 +174,38 @@ export class EmployeesView extends LitElement {
 
     .action-button:hover {
         background-color: white;
-        color:rgb(200, 77, 0);
+        color: #ff6303;;
         border: 1px solid #ff6303;
+    }
+
+    .table-checkbox {
+        -webkit-appearance: none; /* For Safari */
+        -moz-appearance: none; /* For Firefox */
+        appearance: none; /* Standard for modern browsers */
+        width: 20px;
+        height: 20px;
+        border: 2px solid lightgray;
+        border-radius: 5px; /* Smooth corners */
+        transition: border-color 0.3s, background-color 0.3s;
+        cursor: pointer;
+    }
+
+    .table-checkbox:checked {
+        border-color: #ff6303;;
+    }
+
+    .table-checkbox:checked::after {
+        content: '✔';  /* The checkmark symbol */
+        text-align: center;
+        font-size: 15px;
+        color: #ff6303;;
+        line-height: 20px; /* Center the tick vertically */
+        margin-left:2px;
+        position: absolute;
+    }
+
+    .table-checkbox:hover {
+        border-color: #ff6303;;
     }
     `;
 }
