@@ -44,8 +44,8 @@ export class ConfirmModal extends LitElement {
         </div>
         <p>${this.message}</p>
         <div class="actions">
-          <button class="confirm-btn" @click=${this.confirmModal}>Proceed</button>
-          <button class="cancel-btn" @click=${this.closeModal}>Cancel</button>
+          <button class="confirm-btn" @click=${this.confirmModal}>${t('proceed')}</button>
+          <button class="cancel-btn" @click=${this.closeModal}>${t('cancel')}</button>
         </div>
       </div>
     `;

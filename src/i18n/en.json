@@ -1,0 +1,23 @@
+{
+    "employees_menu": "Employees",
+    "add_new": "Add New",
+    "delete_confirm_message": "Selected employee record of {fullname} will be deleted",
+    "welcome_title": "Welcome to ING Hubs",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "date_of_employment": "Date of Employment",
+    "date_of_birth": "Date of Birth",
+    "phone": "Phone",
+    "email": "Email",
+    "department": "Department",
+    "position": "Position",
+    "actions": "Actions",
+    "create_employee_title": "Create New Employee",
+    "edit_employee_title": "Edit Employee",
+    "employees_page_title": "Employee List",
+    "create_employee_btn": "Create Employee",
+    "edit_employee_btn": "Save Changes",
+    "app_description": "Employee Management Application",
+    "confirm_modal_title": "Are You Sure?",
+    "proceed": "Proceed"
+}

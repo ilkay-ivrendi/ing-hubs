@@ -2,108 +2,113 @@ import { LitElement, css, html } from 'lit'
 import { store } from '../store/store.js';
 import { addEmployee } from '../store/employee-slice.js';
 import { Router } from '@vaadin/router';
+import { t } from '../i18n/translation-helper.js';
 
 export class CreateEmployee extends LitElement {
-    static properties = {
-        firstName: { type: String },
-        lastName: { type: String },
-        dateOfEmployment: { type: String },
-        dateOfBirth: { type: String },
-        phoneNumber: { type: String },
-        email: { type: String },
-        department: { type: String },
-        position: { type: String },
-        error: { type: String }
+  static properties = {
+    firstName: { type: String },
+    lastName: { type: String },
+    dateOfEmployment: { type: String },
+    dateOfBirth: { type: String },
+    phoneNumber: { type: String },
+    email: { type: String },
+    department: { type: String },
+    position: { type: String },
+    error: { type: String }
+  }
+
+  constructor() {
+    super()
+    this.firstName = '';
+    this.lastName = '';
+    this.dateOfBirth = '';
+    this.dateOfEmployment = '';
+    this.dateOfBirth = '';
+    this.phoneNumber = '';
+    this.email = '';
+    this.department = '';
+    this.position = '';
+    this.error = '';
+
+    window.addEventListener('language-changed', () => {
+      this.requestUpdate();  
+    });
+  }
+
+  validate() {
+    if (!this.firstName || !this.lastName || !this.dateOfEmployment || !this.dateOfBirth || !this.phoneNumber || !this.email) {
+      this.error = "Please fill in all required fields";
+      return false;
     }
 
-    constructor() {
-        super()
-        this.firstName = '';
-        this.lastName = '';
-        this.dateOfBirth = '';
-        this.dateOfEmployment = '';
-        this.dateOfBirth = '';
-        this.phoneNumber = '';
-        this.email = '';
-        this.department = '';
-        this.position = '';
-        this.error = '';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.error = "Invalid email format.";
+      return false;
     }
 
-    validate() {
-        if (!this.firstName || !this.lastName || !this.dateOfEmployment || !this.dateOfBirth || !this.phoneNumber || !this.email) {
-            this.error = "Please fill in all required fields";
-            return false;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(this.email)) {
-            this.error = "Invalid email format.";
-            return false;
-        }
-
-        const employees = store.getState().employees.list;
-        const dublicate = employees.find(employe => employe.email === this.email);
-        if (dublicate) {
-            this.error = "An Employee with this email already exists";
-        }
-
-        return true;
+    const employees = store.getState().employees.list;
+    const dublicate = employees.find(employe => employe.email === this.email);
+    if (dublicate) {
+      this.error = "An Employee with this email already exists";
     }
 
-    handleSubmit(event) {
-        event.preventDefault();
+    return true;
+  }
 
-        if (!this.validate()) return;
+  handleSubmit(event) {
+    event.preventDefault();
 
-        const newEmployee = {
-            id: Date.now(),
-            first_name: this.firstName,
-            last_name: this.lastName,
-            birth_date: this.dateOfBirth,
-            employment_date: this.dateOfEmployment,
-            phone: this.phoneNumber,
-            email: this.email,
-            department: this.department,
-            position: this.position
-        }
+    if (!this.validate()) return;
 
-        store.dispatch(addEmployee(newEmployee));
-        Router.go('/employees');
+    const newEmployee = {
+      id: Date.now(),
+      first_name: this.firstName,
+      last_name: this.lastName,
+      birth_date: this.dateOfBirth,
+      employment_date: this.dateOfEmployment,
+      phone: this.phoneNumber,
+      email: this.email,
+      department: this.department,
+      position: this.position
     }
 
-    render() {
-        return html`
+    store.dispatch(addEmployee(newEmployee));
+    Router.go('/employees');
+  }
+
+  render() {
+    return html`
         <div class="create-employee-container">
             <div class='create-employee-form'>
-              <h2 class="form-title">Create New Employee</h2>
+              <h2 class="form-title">${t('create_employee_title')}</h2>
               <form @submit="${this.handleSubmit}">
-                <label class="form-label">First Name</label>
+                <label class="form-label">${t('first_name')}</label>
                 <input class="form-input" type="text" placeholder="John" .value="${this.firstName}" @input="${e => this.firstName = e.target.value}" required />
                 
-                <label class="form-label">Last Name</label>
+                <label class="form-label">${t('last_name')}</label>
                 <input class="form-input" type="text" placeholder="Doe" .value="${this.lastName}" @input="${e => this.lastName = e.target.value}" required />
                 
-                <label class="form-label">Date of Employment</label>
+                <label class="form-label">${t('date_of_employment')}</label>
                 <input class="form-input" type="date" placeholder="Date of Employment" .value="${this.dateOfEmployment}" @input="${e => this.dateOfEmployment = e.target.value}" required />
                 
-                <label class="form-label">Date of Birth</label>
+                <label class="form-label">${t('date_of_birth')}</label>
                 <input class="form-input" type="date" placeholder="Date of Birth" .value="${this.dateOfBirth}" @input="${e => this.dateOfBirth = e.target.value}" required />
                 
-                <label class="form-label">Phone Number</label>
+                <label class="form-label">${t('phone')}</label>
                 <input class="form-input" type="tel" placeholder="+90 532 123 45 67" .value="${this.phoneNumber}" @input="${e => this.phoneNumber = e.target.value}" required />
                 
-                <label class="form-label">Email Address</label>
+                <label class="form-label">${t('email')}</label>
                 <input class="form-input" type="email" placeholder="john.doe@mymail.com" .value="${this.email}" @input="${e => this.email = e.target.value}" required />
 
-                <label class="form-label">Department</label>
+                <label class="form-label">${t('department')}</label>
                 <select class="form-select" .value="${this.department}" @change="${e => this.department = e.target.value}">
                     <option value="" disabled selected>--Select--</option>    
                     <option value="Analytics">Analytics</option>
                     <option value="Tech">Tech</option>
                 </select>
                 
-                <label class="form-label">Position</label>
+                <label class="form-label">${t('position')}</label>
                 <select class="form-select" .value="${this.position}" @change="${e => this.position = e.target.value}">
                     <option value="" disabled selected>--Select--</option>
                     <option value="Junior">Junior</option>
@@ -113,15 +118,15 @@ export class CreateEmployee extends LitElement {
 
                 ${this.error ? html`<p class='error'>${this.error}></p> ` : ''}
 
-                <button class="submit-btn" type="submit">Create Employee</button>
+                <button class="submit-btn" type="submit">${t('create_employee_btn')}</button>
               </form>
 
            </div>
         </div>
         `
-    }
+  }
 
-    static styles = css`
+  static styles = css`
   .create-employee-container {
     display: flex;
     justify-content: center;

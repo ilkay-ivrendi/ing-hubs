@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit'
 import { store } from '../store/store.js';
 import { updateEmployee } from '../store/employee-slice.js';
 import { Router } from '@vaadin/router';
+import { t } from '../i18n/translation-helper.js';
 
 export class EditEmployee extends LitElement {
     static properties = {
@@ -19,9 +20,12 @@ export class EditEmployee extends LitElement {
             const id = location.params?.id;
             this.setEmployeeId(id);
         });
+
+        window.addEventListener('language-changed', () => {
+          this.requestUpdate(); 
+        });
     }
 
-    // Set the employee ID (this will be called when the route is hit)
     setEmployeeId(employeeId) {
         this.employeeId = employeeId;
         this.fetchEmployeeData();
@@ -52,17 +56,17 @@ export class EditEmployee extends LitElement {
         if (!dateString) return '';
         const [day, month, year] = dateString.split('/');
         const date = new Date(`${year}-${month}-${day}`);
-        const formattedDate = date.toISOString().split('T')[0]; // Converts to yyyy-mm-dd
+        const formattedDate = date.toISOString().split('T')[0];
         return formattedDate;
     }
 
     handleDateChange(event, field) {
         const [year, month, day] = event.target.value.split('-');
-        const formattedDate = `${day}/${month}/${year}`; // Convert yyyy-mm-dd to dd/mm/yyyy
+        const formattedDate = `${day}/${month}/${year}`;
 
         this.employeeData = {
             ...this.employeeData,
-            [field]: formattedDate, // Dynamically set the correct field
+            [field]: formattedDate, 
         };
     }
 
@@ -71,40 +75,40 @@ export class EditEmployee extends LitElement {
         return html`
          <div class="edit-employee-container">
             <div class='edit-employee-form'>
-                <h2 class="form-title">Edit Employee</h2>
+                <h2 class="form-title">${t('edit_employee_title')}</h2>
                 <form @submit="${this.handleSubmit}">
-                  <label class="form-label">First Name</label>
+                  <label class="form-label">${t('first_name')}</label>
                   <input class="form-input" type="text" name="first_name" .value="${this.employeeData.first_name}" @input="${this.handleInputChange}" required />
 
-                  <label class="form-label">Last Name</label>
+                  <label class="form-label">${t('last_name')}</label>
                   <input class="form-input" type="text" name="last_name" .value="${this.employeeData.last_name}" @input="${this.handleInputChange}" required />
 
-                  <label class="form-label">Date of Employment</label>
+                  <label class="form-label">${t('date_of_employment')}</label>
                   <input class="form-input" type="date" .value="${this.formatDateForInput(this.employeeData.employment_date)}" @input="${(e) => this.handleDateChange(e, 'employment_date')}"required />
                 
-                  <label class="form-label">Date of Birth</label>
+                  <label class="form-label">${t('date_of_birth')}</label>
                   <input class="form-input" type="date" .value="${this.formatDateForInput(this.employeeData.birth_date)}"  @input="${(e) => this.handleDateChange(e, 'birth_date')}"required />
                   
-                  <label class="form-label">Email</label>
+                  <label class="form-label">${t('email')}</label>
                   <input class="form-input" type="email" name="email" .value="${this.employeeData.email}" @input="${this.handleInputChange}" required />
 
-                  <label class="form-label">Phone</label>
+                  <label class="form-label">${t('phone')}</label>
                   <input class="form-input" type="tel" name="phone" .value="${this.employeeData.phone}" @input="${this.handleInputChange}" required />
 
-                  <label class="form-label">Department</label>
+                  <label class="form-label">${t('department')}</label>
                   <select class="form-input" name="department" .value="${this.employeeData.department}" @change="${this.handleInputChange}">
                     <option value="Analytics">Analytics</option>
                     <option value="Tech">Tech</option>
                   </select>
 
-                  <label class="form-label">Position</label>
+                  <label class="form-label">${t('position')}</label>
                   <select class="form-input" name="position" .value="${this.employeeData.position}" @change="${this.handleInputChange}">
                     <option value="Junior">Junior</option>
                     <option value="Medior">Medior</option>
                     <option value="Senior">Senior</option>
                   </select>
 
-                  <button class="submit-btn" type="submit" >Save Changes</button>
+                  <button class="submit-btn" type="submit" >${t('edit_employee_btn')}</button>
                 </form>
             </div>
         </div>

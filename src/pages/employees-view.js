@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { store } from '../store/store.js';
 import { setEmployees, deleteEmployee, updateEmployee } from '../store/employee-slice.js';
 import { Router } from '@vaadin/router';
+import { t } from '../i18n/translation-helper.js';
 
 import 'fa-icons';
 import '../components/confirm-modal.js';
@@ -24,14 +25,16 @@ export class EmployeesView extends LitElement {
 
         store.subscribe(() => {
             const state = store.getState();
-            console.log("subscribed to store", state);
             this.employees = state.employees.list;
+        });
+
+        window.addEventListener('language-changed', () => {
+            this.requestUpdate();
         });
     }
 
     async firstUpdated() {
         const state = store.getState();
-        console.log("firstUpdated", state);
         if (!state.employees.initialized) {
             const response = await fetch('/src/MOCK_DATA.json');
             const data = await response.json();
@@ -55,18 +58,16 @@ export class EmployeesView extends LitElement {
 
     onDeleteEmployee(employee) {
         const fullName = `${employee.first_name} ${employee.last_name}`;
-
         const dialog = this.shadowRoot.getElementById('confirm-delete');
-        dialog.openModal(`Selected employee record of ${fullName} will be deleted`);
+        const message = t('delete_confirm_message').replace('{fullname}', fullName);
 
+        dialog.openModal(message);
         dialog.addEventListener('confirmModal', () => {
             store.dispatch(deleteEmployee(employee.id));
-        }, { once: true }); 
-        console.log("Delete Employee Success", employee.id);
+        }, { once: true });
     }
 
     onEditEmployee(employeeId) {
-        console.log("Edit Employe", employeeId);
         Router.go(`/employees/${employeeId}/edit`);
     }
 
@@ -78,7 +79,7 @@ export class EmployeesView extends LitElement {
     render() {
         return html`
         <div class="page-header">
-           <h2 class="page-title">Employee List</h2>
+           <h2 class="page-title">${t('employees_page_title')}</h2>
            <div class="action-buttons-container">
             <button class="action-button"> <fa-icon class="fas fa-bars"></fa-icon> </button>
             <button class="action-button" @click=${this.onActionButtonClick}> <fa-icon class="fas fa-th"></fa-icon> </button>
@@ -89,15 +90,15 @@ export class EmployeesView extends LitElement {
             <thead>
                 <tr>
                     <th><input type="checkbox" class="table-checkbox"></th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Date of Employment</th>
-                    <th>Date of Birth</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Position</th>
-                    <th>Actions</th>
+                    <th>${t('first_name')}</th>
+                    <th>${t('last_name')}</th>
+                    <th>${t('date_of_employment')}</th>
+                    <th>${t('date_of_birth')}</th>
+                    <th>${t('phone')}</th>
+                    <th>${t('email')}</th>
+                    <th>${t('department')}</th>
+                    <th>${t('position')}</th>
+                    <th>${t('actions')}</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,7 +131,7 @@ export class EmployeesView extends LitElement {
         >
         </pagination-component>
 
-        <confirm-modal id="confirm-delete"></confirm-modal>
+        <confirm-modal id="confirm-delete" .title="${t('confirm_modal_title')}"></confirm-modal>
 
         `;
     }

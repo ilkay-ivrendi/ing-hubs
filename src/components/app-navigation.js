@@ -3,7 +3,9 @@ import 'fa-icons';
 
 import ingLogo from '../assets/ing-logo.png'
 import agentIcon from '../assets/callcenter-agent.png'
-import trFlag from 'flag-icons/flags/4x3/tr.svg';
+
+import { loadTranslations, t } from '../i18n/translation-helper.js';
+import './language-selector.js';
 
 export class AppNavigation extends LitElement {
     static properties = {
@@ -12,10 +14,26 @@ export class AppNavigation extends LitElement {
 
     constructor() {
         super();
+        this.lang = localStorage.getItem('lang') || 'en';
+        loadTranslations(this.lang); // Load translations immediately on initialization
         // Initialize with default path or get from router if available
         window.addEventListener('vaadin-router-location-changed', (event) => {
             this.currentPath = event.detail.location.pathname;
         });
+
+        // Listen for language change events
+        window.addEventListener('language-changed', () => {
+            this.requestUpdate();  // Trigger re-render on language change
+        });
+    }
+
+    async firstUpdated() {
+        await loadTranslations(this.lang); 
+        this.dispatchEvent(new CustomEvent('language-changed', {
+            bubbles: true,
+            composed: true
+        }));
+        this.requestUpdate();
     }
 
     render() {
@@ -35,12 +53,12 @@ export class AppNavigation extends LitElement {
                 
                 <div class="menu-items">
                     <a href="/employees" class="icon-link">
-                        <img src=${agentIcon} class="nav-logo" >Employees</a>
+                        <img src=${agentIcon} class="nav-logo" >${t('employees_menu')}</a>
 
                     <a href="/create-employee" class="icon-link ${!isEmployeesView ? 'disabled' : ''}">
-                        <fa-icon class="fas fa-plus"></fa-icon> Add New</a>
+                        <fa-icon class="fas fa-plus"></fa-icon> ${t('add_new')}</a>
 
-                    <img src=${trFlag} width="25">
+                    <language-selector></language-selector>
                 </div> 
             </nav>    
         `
