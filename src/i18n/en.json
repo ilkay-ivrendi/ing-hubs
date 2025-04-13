@@ -21,5 +21,7 @@
     "confirm_modal_title": "Are You Sure?",
     "proceed": "Proceed",
     "search": "Search",
-    "search_placeholder": "Search Name, E-Mail, Phone, Departman or Position"
+    "search_placeholder": "Search Name, E-Mail, Phone, Departman or Position",
+    "grid_view": "Grid View",
+    "table_view": "Table View"
 }

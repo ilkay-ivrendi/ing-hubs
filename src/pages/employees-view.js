@@ -98,6 +98,7 @@ export class EmployeesView extends LitElement {
         console.log("Table View");
         this.viewMode = 'table';
         localStorage.setItem('viewMode', this.viewMode);
+        window.dispatchEvent(new CustomEvent('view-mode-changed'));
     }
 
     gridView() {
@@ -105,6 +106,7 @@ export class EmployeesView extends LitElement {
         this.viewMode = 'grid';
         this.itemsPerPage = 12;
         localStorage.setItem('viewMode', this.viewMode);
+        window.dispatchEvent(new CustomEvent('view-mode-changed'));
     }
 
     renderTableView() {
@@ -293,6 +295,7 @@ export class EmployeesView extends LitElement {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        max-width: 350px;
     }
 
     .grid-actions {

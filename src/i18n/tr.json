@@ -22,6 +22,7 @@
     "proceed": "Devam",
     "cancel": "İptal",
     "search": "Ara",
-    "search_placeholder": "İsim, E-posta, Telefon, Departman veya Pozisyon Ara"
-
+    "search_placeholder": "İsim, E-posta, Telefon, Departman veya Pozisyon Ara",
+    "grid_view": "Izgara Görünümü",
+    "table_view": "Tablo Görünümü"
 }

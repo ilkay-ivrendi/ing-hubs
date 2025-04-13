@@ -10,11 +10,13 @@ import './language-selector.js';
 export class AppNavigation extends LitElement {
     static properties = {
         currentPath: { type: String },
+        viewMode: { type: String }
     };
 
     constructor() {
         super();
         this.lang = localStorage.getItem('lang') || 'en';
+        this.viewMode = localStorage.getItem('viewMode') || 'table';
         loadTranslations(this.lang);
         window.addEventListener('vaadin-router-location-changed', (event) => {
             this.currentPath = event.detail.location.pathname;
@@ -34,12 +36,26 @@ export class AppNavigation extends LitElement {
         this.requestUpdate();
     }
 
+    connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('view-mode-changed', this.updateViewMode.bind(this));
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        window.removeEventListener('view-mode-changed', this.updateViewMode.bind(this));
+    }
+
+    updateViewMode() {
+        this.viewMode = localStorage.getItem('viewMode') || 'table';
+    }
+
     render() {
         const isEmployeesView = this.currentPath === '/employees';
         return html`
             ${isEmployeesView
-                ? html`<h5 class="page-title">Emplooye List (Table View)</h5>`
-                : html`<h5 class="page-title">Welcome to ING Hubs</h5>`
+                ? html`<h5 class="page-title">${t('employees_page_title')} (${t(this.viewMode === 'grid' ? 'grid_view' : 'table_view')})</h5>`
+                : html`<h5 class="page-title">${t('welcome_title')}</h5>`
             }
             <nav>
                 <div class="logo-container">
