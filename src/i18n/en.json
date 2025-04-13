@@ -19,5 +19,7 @@
     "edit_employee_btn": "Save Changes",
     "app_description": "Employee Management Application",
     "confirm_modal_title": "Are You Sure?",
-    "proceed": "Proceed"
+    "proceed": "Proceed",
+    "search": "Search",
+    "search_placeholder": "Search Name, E-Mail, Phone, Departman or Position"
 }

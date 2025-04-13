@@ -20,5 +20,8 @@
     "app_description": "Çalıan Yönetim Uygulaması",
     "confirm_modal_title": "Eminmisiniz?",
     "proceed": "Devam",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "search": "Ara",
+    "search_placeholder": "İsim, E-posta, Telefon, Departman veya Pozisyon Ara"
+
 }

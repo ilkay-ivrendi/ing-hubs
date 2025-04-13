@@ -3,8 +3,9 @@ import { store } from '../store/store.js';
 import { setEmployees, deleteEmployee } from '../store/employee-slice.js';
 import { Router } from '@vaadin/router';
 import { t } from '../i18n/translation-helper.js';
-
 import 'fa-icons';
+
+import '../components/search-panel.js';
 import '../components/confirm-modal.js';
 import '../components/pagination.js';
 
@@ -14,6 +15,7 @@ export class EmployeesView extends LitElement {
         employees: { type: Array },
         currentPage: { type: Number },
         itemsPerPage: { type: Number },
+        searchQuery: { type: String },
         viewMode: { type: String }
     };
 
@@ -23,11 +25,13 @@ export class EmployeesView extends LitElement {
         this.employees = [];
         this.currentPage = 1;
         this.itemsPerPage = 10;
+        this.searchQuery = '';
+
         this.viewMode = localStorage.getItem('viewMode') | 'table';
-        if(this.viewMode === 'grid') {
+        if (this.viewMode === 'grid') {
             this.itemsPerPage = 12;
-        } 
-            
+        }
+
 
         store.subscribe(() => {
             const state = store.getState();
@@ -51,11 +55,24 @@ export class EmployeesView extends LitElement {
         }
     }
 
+    get filteredEmployees() {
+        if (!this.searchQuery) return this.employees;
+
+        const lowerQuery = this.searchQuery.toLowerCase();
+        return this.employees.filter(emp =>
+            `${emp.first_name} ${emp.last_name}`.toLowerCase().includes(lowerQuery) ||
+            emp.email.toLowerCase().includes(lowerQuery) ||
+            emp.phone.toLowerCase().includes(lowerQuery) ||
+            emp.department.toLowerCase().includes(lowerQuery) ||
+            emp.position.toLowerCase().includes(lowerQuery)
+        );
+    }
+
     get currentPageData() {
-        if (!this.employees) return [];
+        const filtered = this.filteredEmployees;
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
-        return this.employees.slice(startIndex, endIndex);
+        return filtered.slice(startIndex, endIndex);
     }
 
     onPageChange(event) {
@@ -125,7 +142,7 @@ export class EmployeesView extends LitElement {
                        </td>
                     </tr>
                   `
-                )}
+        )}
               </tbody>
             </table>
             `
@@ -163,6 +180,7 @@ export class EmployeesView extends LitElement {
         <div class="page-header">
            <h2 class="page-title">${t('employees_page_title')}</h2>
            <div class="action-buttons-container">
+            <search-panel .query=${this.searchQuery} @search-changed=${e => this.searchQuery = e.detail.query}></search-panel>
             <button class="action-button" @click=${this.tableView}> <fa-icon class="fas fa-bars"></fa-icon> </button>
             <button class="action-button" @click=${this.gridView}> <fa-icon class="fas fa-th"></fa-icon> </button>
            </div>
@@ -199,24 +217,28 @@ export class EmployeesView extends LitElement {
     }
 
     th {
-      text-align: left;
-      padding: 8px;
-      color: #ff6303;
-      font-size: 14px;
-      margin: 2rem;
+        text-align: left;
+        padding: 8px;
+        color: #ff6303;
+        font-size: 14px;
+        margin: 2rem;
     }
     td {
-      text-align: left;
-      padding: 8px;
+        text-align: left;
+        padding: 8px;
+    }
+
+    .action-buttons-container {
+        display:flex;
     }
 
     .action-button {
-      color: #ff6303;
-      width: 40px;
-      height: 40px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
+        color: #ff6303;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
     }
 
     .action-button:hover {
