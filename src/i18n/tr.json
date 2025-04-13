@@ -1,7 +1,7 @@
 {
     "employees_menu": "Çalışanlar",
     "add_new": "Yeni Ekle",
-    "delete_confirm_message": "{fullname} adlı çalışanın kaydı silinecektir",
+    "delete_confirm_message": "<strong>{fullname}</strong> adlı çalışanın kaydı silinecektir",
     "welcome_title": "ING Hubsa Hoşgeldiniz",
     "first_name": "İsim",
     "last_name": "Soyisim",
@@ -19,6 +19,6 @@
     "edit_employee_btn": "Değişiklikleri Kaydet",
     "app_description": "Çalıan Yönetim Uygulaması",
     "confirm_modal_title": "Eminmisiniz?",
-    "proceed": "Devamet",
+    "proceed": "Devam",
     "cancel": "İptal"
 }

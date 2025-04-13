@@ -1,7 +1,7 @@
 {
     "employees_menu": "Employees",
     "add_new": "Add New",
-    "delete_confirm_message": "Selected employee record of {fullname} will be deleted",
+    "delete_confirm_message": "Selected employee record of <strong>{fullname}</strong> will be deleted",
     "welcome_title": "Welcome to ING Hubs",
     "first_name": "First Name",
     "last_name": "Last Name",

@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import 'fa-icons';
+import { t } from '../i18n/translation-helper.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 export class ConfirmModal extends LitElement {
   static properties = {
@@ -41,7 +43,7 @@ export class ConfirmModal extends LitElement {
                   <h3>${this.title}</h3>
                   <fa-icon class="fas fa-times close-modal" @click=${this.closeModal}></fa-icon>
               </div>
-              <p>${this.message}</p>
+              <p>${unsafeHTML(this.message)}</p>
               <div class="actions">
                 <button class="confirm-btn" @click=${this.confirmModal}>${t('proceed')}</button>
                 <button class="cancel-btn" @click=${this.closeModal}>${t('cancel')}</button>
