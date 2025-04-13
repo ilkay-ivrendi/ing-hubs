@@ -192,7 +192,7 @@ export class EmployeesView extends LitElement {
 
        <pagination-component
             .currentPage="${this.currentPage}"
-            .totalPages="${Math.ceil(this.employees.length / this.itemsPerPage)}"
+            .totalPages="${Math.ceil(this.filteredEmployees.length / this.itemsPerPage)}"
             @page-change="${this.onPageChange}"
         >
         </pagination-component>

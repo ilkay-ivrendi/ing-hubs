@@ -93,6 +93,20 @@ export class SearchPanel extends LitElement {
       padding: 0.4rem 0.6rem;
       margin-right: 10px;
     }
+
+    @media (max-width: 768px) {
+      .search-input { 
+        transition: none;
+      }
+      .search-input.open {
+        position: absolute;
+        right: -5px;
+        width: 150px;
+        margin-top: 100px;
+        opacity: 1;
+        padding: 0.4rem 0.6rem;
+      }
+    }
   `;
 }
 

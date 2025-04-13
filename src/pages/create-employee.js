@@ -166,7 +166,6 @@ export class CreateEmployee extends LitElement {
     background: #fafafa;
     transition: border-color 0.2s;
     margin-bottom: 15px;
-    width: 320px;
     max-width: 320px;
   }
 
@@ -193,12 +192,17 @@ export class CreateEmployee extends LitElement {
     color: white;
     cursor: pointer;
     transition: background-color 0.2s;
-    width: 50%;
-    margin: 1rem auto 0 auto;
+    margin-top: 1rem;
   }
 
   .submit-btn:hover {
     background-color: #ff9136;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
   }
 `;
 }

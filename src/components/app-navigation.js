@@ -50,6 +50,13 @@ export class AppNavigation extends LitElement {
         this.viewMode = localStorage.getItem('viewMode') || 'table';
     }
 
+    toggleMobileMenu() {
+        const menu = this.renderRoot?.getElementById('menuItems');
+        if (menu) {
+            menu.classList.toggle('show');
+        }
+    }
+
     render() {
         const isEmployeesView = this.currentPath === '/employees';
         return html`
@@ -63,11 +70,14 @@ export class AppNavigation extends LitElement {
                         <img src=${ingLogo} class="nav-logo" >
                         <h3>ING</h3>
                     </a>
+                   
                 </div>
-                
-                <div class="menu-items">
+                 <button class="hamburger" @click=${this.toggleMobileMenu}>
+                    <fa-icon class="fas fa-bars"></fa-icon>
+                 </button>
+                <div class="menu-items" id="menuItems">
                     <a href="/employees" class="icon-link">
-                        <img src=${agentIcon} class="nav-logo" >${t('employees_menu')}</a>
+                        <img src=${agentIcon} class="menu-icon" >${t('employees_menu')}</a>
 
                     <a href="/create-employee" class="icon-link ${!isEmployeesView ? 'disabled' : ''}">
                         <fa-icon class="fas fa-plus"></fa-icon> ${t('add_new')}</a>
@@ -80,11 +90,11 @@ export class AppNavigation extends LitElement {
 
     static styles = css`
     nav {
-      background: #ffffff;
-      padding: 0.2rem;
-      display: flex;
-      align-items:center;
-      justify-content: space-between;
+        background: #ffffff;
+        padding: 0.2rem;
+        display: flex;
+        align-items:center;
+        justify-content: space-between;
     }
 
     .logo-container {
@@ -96,7 +106,12 @@ export class AppNavigation extends LitElement {
         width: 30px;
         height: 30px;
         border-radius: 5px;
-        margin: 0 10px 0 10px;
+        margin-left: 10px;
+    }
+
+    .menu-icon {
+        width: 25px;
+        height: 25px;
     }
 
     .menu-items {
@@ -136,6 +151,42 @@ export class AppNavigation extends LitElement {
         cursor: not-allowed;
     }
 
+    .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 24px;
+        margin-left: 10px;
+        cursor: pointer;
+        color: #ff6303;
+    }
+
+    @media (max-width: 768px) {
+    .menu-items {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100px;
+        right: 20px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 10;
+      }
+
+    .menu-items.show {
+        display: flex;
+      }
+
+    .hamburger {
+        display: block;
+      }
+
+    nav {
+        flex-wrap: wrap;
+      }
+    }
     `;
 }
 
