@@ -16,7 +16,8 @@ export class EmployeesView extends LitElement {
         currentPage: { type: Number },
         itemsPerPage: { type: Number },
         searchQuery: { type: String },
-        viewMode: { type: String }
+        viewMode: { type: String },
+        selectedEmployeeIds: { type: Array },
     };
 
 
@@ -26,8 +27,9 @@ export class EmployeesView extends LitElement {
         this.currentPage = 1;
         this.itemsPerPage = 10;
         this.searchQuery = '';
+        this.selectedEmployeeIds = []
 
-        this.viewMode = localStorage.getItem('viewMode') | 'table';
+        this.viewMode = localStorage.getItem('viewMode') || 'table';
         if (this.viewMode === 'grid') {
             this.itemsPerPage = 12;
         }
@@ -95,50 +97,82 @@ export class EmployeesView extends LitElement {
     }
 
     tableView() {
-        console.log("Table View");
         this.viewMode = 'table';
         localStorage.setItem('viewMode', this.viewMode);
         window.dispatchEvent(new CustomEvent('view-mode-changed'));
     }
 
     gridView() {
-        console.log("Grid View");
         this.viewMode = 'grid';
         this.itemsPerPage = 12;
         localStorage.setItem('viewMode', this.viewMode);
         window.dispatchEvent(new CustomEvent('view-mode-changed'));
     }
 
+    toggleCheckbox(event, id) {
+        const checkbox = event.currentTarget.querySelector('.table-checkbox');
+        if (!checkbox) return;
+
+        checkbox.checked = !checkbox.checked;
+
+        if (checkbox.checked) {
+            this.selectedEmployeeIds = [...this.selectedEmployeeIds, id];
+        } else {
+            this.selectedEmployeeIds = this.selectedEmployeeIds.filter(empId => empId !== id);
+        }
+
+        this.requestUpdate();
+    }
+
+    toggleSelectAll(event) {
+        const isChecked = event.target.checked;
+
+        if (isChecked) {
+            this.selectedEmployeeIds = this.currentPageData.map(emp => emp.id);
+        } else {
+            this.selectedEmployeeIds = [];
+        }
+
+        console.log("select all clicked");
+
+        this.requestUpdate();
+    }
+
     renderTableView() {
         return html`
+        <div class="responsive-table">
             <table>
                 <thead>
                     <tr>
-                      <th><input type="checkbox" class="table-checkbox"></th>
+                      <th><input type="checkbox" class="table-checkbox" @change="${this.toggleSelectAll}"></th>
                       <th>${t('first_name')}</th>
                       <th>${t('last_name')}</th>
-                      <th>${t('date_of_employment')}</th>
-                      <th>${t('date_of_birth')}</th>
+                      <th class="fixed">${t('date_of_employment')}</th>
+                      <th class="fixed">${t('date_of_birth')}</th>
                       <th>${t('phone')}</th>
                       <th>${t('email')}</th>
                       <th>${t('department')}</th>
                       <th>${t('position')}</th>
-                      <th>${t('actions')}</th>
+                      <th class="fixed">${t('actions')}</th>
                     </tr>
                 </thead>
               <tbody>
                 ${this.currentPageData.map((employee) => html`
-                    <tr>
-                       <td><input type="checkbox" class="table-checkbox"></td>
-                       <td>${employee.first_name}</td>
-                       <td>${employee.last_name}</td>
-                       <td>${employee.employment_date}</td>
-                       <td>${employee.birth_date}</td>
-                       <td>${employee.phone}</td>
-                       <td>${employee.email}</td>
-                       <td>${employee.department}</td>
-                       <td>${employee.position}</td>
-                       <td>
+                    <tr @click="${(event) => this.toggleCheckbox(event, employee.id)}">
+                       <td class="checkbox-row" > 
+                            <input type="checkbox" class="table-checkbox" 
+                            .checked=${this.selectedEmployeeIds.includes(employee.id)}
+                            @click="${(event) => event.stopPropagation()}">
+                       </td>
+                       <td class="first-name-row">${employee.first_name}</td>
+                       <td class="last-name-row">${employee.last_name}</td>
+                       <td class="doe-row">${employee.employment_date}</td>
+                       <td class="dob-row">${employee.birth_date}</td>
+                       <td class="phone-row">${employee.phone}</td>
+                       <td class="email-row">${employee.email}</td>
+                       <td class="department-row">${employee.department}</td>
+                       <td class="position-row">${employee.position}</td>
+                       <td class="actions-row">
                            <button class="action-button"  @click="${() => this.onEditEmployee(employee.id)}"><fa-icon class="fas fa-edit"></fa-icon></button>
                            <button class="action-button" @click="${() => this.onDeleteEmployee(employee)}"><fa-icon class="fas fa-trash"></fa-icon></button>
                        </td>
@@ -147,6 +181,7 @@ export class EmployeesView extends LitElement {
         )}
               </tbody>
             </table>
+            </div>
             `
     }
 
@@ -211,6 +246,17 @@ export class EmployeesView extends LitElement {
         justify-content: space-between;
     }
 
+    .responsive-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .responsive-table table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
     table {
         font-family: arial, sans-serif;
         border-collapse: collapse;
@@ -228,6 +274,34 @@ export class EmployeesView extends LitElement {
     td {
         text-align: left;
         padding: 8px;
+    }
+
+    tbody tr:hover {
+        background:rgb(249, 123, 45);
+        cursor: pointer;
+        color: white;
+
+        .table-checkbox:checked {
+            border-color: white;
+        }
+
+        .table-checkbox:checked::after {
+            color: white;;
+        }
+
+        .table-checkbox:hover {
+            border-color: white;
+        }
+
+        .action-button { 
+            color: white;
+        }
+
+        .action-button:hover {
+            background-color: white;
+            color: #ff6303;;
+            border: 1px solid #ff6303;
+        }
     }
 
     .action-buttons-container {
@@ -277,6 +351,14 @@ export class EmployeesView extends LitElement {
 
     .table-checkbox:hover {
         border-color: #ff6303;;
+    }
+
+    .phone-row {
+        min-width: 150px;
+    }
+
+    .fixed {
+        min-width: 100px;
     }
 
     .grid-container {
